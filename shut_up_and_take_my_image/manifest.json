@@ -1,0 +1,10 @@
+{
+    "name" : "Give Me All",
+    "description": "Testing",
+    "version" : "1.0",
+    "manifest_version" : 3,
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": "images/i_see_image.png"
+      }
+}
