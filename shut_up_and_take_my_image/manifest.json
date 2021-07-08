@@ -10,6 +10,7 @@
   "permissions": [
     "activeTab",
     "<all_urls>",
-    "tabs"
+    "tabs",
+    "scripting"
   ]
 }
