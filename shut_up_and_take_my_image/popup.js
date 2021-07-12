@@ -26,9 +26,12 @@
       download: "",
     });
     const preview = createElement("img", undefined, { src });
+    // preview.onclick = downloadResource(src);
     // console.log(link);
     link.appendChild(preview);
+    // list.onclick = downloadResource(src);
     list.appendChild(link);
+    // list.appendChild(preview);
     return list;
     // return '<div class="image_grid">' +
     // '<a href="' + src + '" target="_blank" download>' +
@@ -106,14 +109,28 @@
     return img_urls;
   };
 
+  //
+  function pause(msec) {
+    return new Promise(
+        (resolve, reject) => {
+            setTimeout(resolve, msec || 1000);
+        }
+    );
+}
   // download
-  const downloadAll = () => {
+  async function downloadAll() {
     const filter = images.filter((item) => getName(item) !== "");
-    filter.forEach((item) => {
+    let limited = 0;
+    for(var i = 0; i < filter.length; ++i) {
       // chrome.downloads.download({
       //   url: item,
       // });
-      downloadResource(item);
+      downloadResource(filter[i]);
+      if (limited >= 10) {
+        await pause(1000);
+        limited = 0;
+    }
+      limited ++;
       // const link = createElement("a", undefined, {
       //   href: item,
       //   download: getName(item),
@@ -121,7 +138,7 @@
       // document.body.appendChild(link);
       // link.click();
       // document.body.removeChild(link);
-    });
+    };
   };
   // handle download
   const handleDownload = () => {
@@ -148,7 +165,7 @@
   // force to download image by change header to allow cross-origin
   function forceDownload(blob, filename) {
     var a = document.createElement("a");
-    a.download = filename;
+    a.download = "";
     a.href = blob;
     document.body.appendChild(a);
     a.click();

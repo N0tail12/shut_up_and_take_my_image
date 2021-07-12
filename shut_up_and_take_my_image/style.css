@@ -27,30 +27,42 @@ img {
   cursor: pointer;
   margin: 10px 0;
   display: none;
+  position: fixed;
+  bottom: 0px;
 }
 #download_button:hover {
   transition-duration: 0.4s;
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 .list {
-  display: grid;
+  /* display: grid;
   grid-gap: 10px;
   grid-template-columns: auto auto auto;
   grid-template-rows: max-content;
   height: 240px;
-  overflow: auto;
+  overflow: auto; */
+  display: flex;
+  flex-direction: column;
   /* width: 100%;
   max-height: 200px; */
 }
-.image_grid{
-  width: 50px;
-  height: 50px;
+.image_grid {
+  position: relative;
+  float: left;
+  margin-bottom: 4px;
+  width: 100%;
+  height: 150px;
+  border-bottom: 1px solid #e5e5e5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  /* width: 70px;*/
   background: #eee;
 }
-.image_grid img{
-  width: 100%;
-  height: 100%;
-}
-.found_images{
+/* .image_grid img {
+  border: 2px solid black;
+} */
+.found_images {
   margin: 20px 0 20px 0;
 }
