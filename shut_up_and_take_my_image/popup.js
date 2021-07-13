@@ -3,12 +3,12 @@
   let image_List = document.getElementById("list_image");
   let downloadImages = document.getElementById("download_button");
   let count = 0;
-  let test;
+  let origin;
   const getName = (url) => {
     const path = url.split("/");
     return path[path.length - 1];
   };
- // create element with class and config
+  // create element with class and config
   const createElement = (el, class_name, config = {}) => {
     const element = document.createElement(el);
     element.className = class_name || "";
@@ -17,29 +17,23 @@
     }
     return element;
   };
-// create list of image
+  // create list of image
   const createList = (src) => {
     const list = createElement("div", "image_grid");
-    const link = createElement("a", undefined, {
-      href: src,
-      target: "_blank",
-      download: "",
-    });
+    // const link = createElement("a", undefined, {
+    //   href: src,
+    //   download: "",
+    // });
     const preview = createElement("img", undefined, { src });
     // preview.onclick = downloadResource(src);
     // console.log(link);
-    link.appendChild(preview);
+    // link.appendChild(preview);
     // list.onclick = downloadResource(src);
-    list.appendChild(link);
+    list.appendChild(preview);
     // list.appendChild(preview);
     return list;
-    // return '<div class="image_grid">' +
-    // '<a href="' + src + '" target="_blank" download>' +
-    // '<img class="image" src="' + src + '" />' +
-    // '</a>' +
-    // '</div>';
   };
-// render list of image
+  // render list of image
   const renderList = (images, el) => {
     el.innerHTML = "";
     const create_List = createElement("div", "list");
@@ -67,19 +61,18 @@
     el.appendChild(create_List);
   };
 
-
-//get images on page
+  //get images on page
   const getPageImages = () => {
     // const images = document.body.getElementsByTagName("img");
     // console.log('images: ',images);
     // const imageSource = Array.from(images).map((el) => el.src);
     // return imageSource;
-    var images = [],
-      bgImg,
-      src;
+    var bgImg, src;
     const getUrls = (el) => {
       bgImg = el.style.backgroundImage;
-      if (bgImg) { // if the image is background.;
+      origin = document.location.origin;
+      if (bgImg) {
+        // if the image is background.;
         src = bgImg
           .replace(/^\s?url\((\'|\")/, "")
           .replace(/(\"|\')\)\s?$/, "");
@@ -87,13 +80,15 @@
       } else {
         src = el.src;
       }
-      if (src.match(/^data\:image|\/\//)) { // if source is data:image type or contains "//";
+      if (src.match(/^data\:image|\/\//)) {
+        // if source is data:image type or contains "//";
         return src;
       }
       return document.location.origin.replace(/\/$/, "") + "/" + src; // if source other type. for example "/img/img.png";
     };
 
-    const reduceArray = (a, b) => { // if 2 images are the same source;
+    const reduceArray = (a, b) => {
+      // if 2 images are the same source;
       if (a.indexOf(b) < 0) {
         a.push(b);
       }
@@ -111,56 +106,29 @@
 
   //
   function pause(msec) {
-    return new Promise(
-        (resolve, reject) => {
-            setTimeout(resolve, msec || 1000);
-        }
-    );
-}
+    return new Promise((resolve, reject) => {
+      setTimeout(resolve, msec || 1000);
+    });
+  }
   // download
   async function downloadAll() {
     const filter = images.filter((item) => getName(item) !== "");
     let limited = 0;
-    for(var i = 0; i < filter.length; ++i) {
-      // chrome.downloads.download({
-      //   url: item,
-      // });
+    for (var i = 0; i < filter.length; ++i) {
       downloadResource(filter[i]);
       if (limited >= 10) {
-        await pause(1000);
+        await pause(3000);
         limited = 0;
+      }
+      limited++;
     }
-      limited ++;
-      // const link = createElement("a", undefined, {
-      //   href: item,
-      //   download: getName(item),
-      // });
-      // document.body.appendChild(link);
-      // link.click();
-      // document.body.removeChild(link);
-    };
-  };
+  }
   // handle download
   const handleDownload = () => {
-    if (window.confirm(`Will be downloaded ${count} files. Are you sure?`)){
-      // let length = Math.ceil(count / 10);
-      // let start = 0;
-      // let end_arr = 10;
-      // for (let i = 0; i < length; ++i) {
-      //   if(end_arr >= count){
-      //     end_arr = count;
-      //   }
-      //   test = images.slice(start, end_arr);
-        downloadAll();
-      //   console.log('img2', images);
-      //   console.log('test', test);
-      //   start = start + 10;
-      //   end_arr = end_arr + 10;
-      // }
-      
+    if (window.confirm(`Will be downloaded ${count} files. Are you sure?`)) {
+      downloadAll();
     }
   };
-
 
   // force to download image by change header to allow cross-origin
   function forceDownload(blob, filename) {
@@ -184,9 +152,9 @@
         let blobUrl = window.URL.createObjectURL(blob);
         forceDownload(blobUrl, filename);
       })
-      .catch((e) => console.error(e));
+      .catch((e) => console.log(e));
   }
-// execute Script;
+  // execute Script;
   window.onload = function () {
     chrome.tabs.query({ active: true }, function (tabs) {
       for (var i = 0; i < tabs.length; i++) {
@@ -197,7 +165,7 @@
           },
           (injectionResults) => {
             images = injectionResults[0].result;
-            console.log('img1', images);
+            console.log("img1", images);
             if (images.length) {
               downloadImages.style.display = "block";
               downloadImages.onclick = handleDownload;
