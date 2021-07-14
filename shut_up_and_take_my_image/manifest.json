@@ -7,5 +7,6 @@
     "default_popup": "popup.html",
     "default_icon": "images/i_see_image.png"
   },
-  "permissions": ["activeTab", "<all_urls>", "scripting"]
+  "permissions": ["activeTab", "scripting", "tabs"],
+  "host_permissions": ["<all_urls>"]
 }

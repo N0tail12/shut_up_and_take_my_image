@@ -116,6 +116,7 @@
     let limited = 0;
     for (var i = 0; i < filter.length; ++i) {
       downloadResource(filter[i]);
+      console.log(i);
       if (limited >= 10) {
         await pause(3000);
         limited = 0;
