@@ -63,6 +63,9 @@ img {
 /* .image_grid img {
   border: 2px solid black;
 } */
+.mark {
+  border: 2px solid black;
+}
 .found_images {
   margin: 20px 0 20px 0;
 }
