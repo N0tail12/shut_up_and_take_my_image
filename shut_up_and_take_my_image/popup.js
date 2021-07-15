@@ -198,13 +198,21 @@
       );
     }
     images = images_selector;
+    if(images.length){
+      downloadImages.textContent = "Download " + images.length +" images";
+    }else{
+      downloadImages.textContent = "Download "
+    }
   };
   // Deselect
   const deselectAll = () => {
     let Deselect = document.getElementsByClassName("deselect_all")[0];
-    Deselect.disabled = false;
-    Deselect.style.cursor = 'pointer';
-    Deselect.style.backgroundColor = '#2196F3';
+    console.log(Deselect)
+    if(images.length > 0){
+      Deselect.disabled = false;
+      Deselect.style.cursor = "pointer";
+      Deselect.style.backgroundColor = '#2196F3';
+    }
     Deselect.addEventListener('click', function(){
       for (let index = 0; index < testing.length; index++) {
         if (testing[index].classList.length === 2) {
@@ -213,7 +221,6 @@
       }
       handleOnclick();
     });
-    
   }
   // execute Script;
   window.onload = function () {
@@ -242,7 +249,7 @@
                   }
                 }
                 handleOnclick();
-                deselectAll()
+                deselectAll();
               });
               for (let index = 0; index < testing.length; index++) {
                 testing[index].addEventListener("click", function () {
@@ -252,9 +259,7 @@
                     testing[index].className += " mark";
                   }
                   handleOnclick();
-                  if(images.length){
-                    deselectAll();
-                  }
+                  deselectAll();
                 });
               }
               downloadImages.onclick = handleDownload;
