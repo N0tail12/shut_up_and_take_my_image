@@ -5,6 +5,7 @@
   let count = 0;
   let testing;
   let images_selector = [];
+  let list = [];
   const getName = (url) => {
     const path = url.split("/");
     return path[path.length - 1];
@@ -21,17 +22,11 @@
   // create list of image
   const createList = (src) => {
     const list = createElement("div", "image_grid");
-    // const link = createElement("a", undefined, {
-    //   href: src,
-    //   download: "",
-    // });
+
     const preview = createElement("img", undefined, { src });
-    // preview.onclick = downloadResource(src);
-    // console.log(link);
-    // link.appendChild(preview);
-    // list.onclick = downloadResource(src);
+
     list.appendChild(preview);
-    // list.appendChild(preview);
+
     return list;
   };
   // render list of image
@@ -40,7 +35,6 @@
     const create_List = createElement("div", "list");
     const filter_images = images.filter((item) => getName(item) !== "");
     count = filter_images.length;
-    // console.log(filter_images);
     filter_images.forEach((items) => {
       const item_List = createList(items);
       create_List.appendChild(item_List);
@@ -54,12 +48,41 @@
       src: "images/found_images.png",
       style: "width: 46px; height: 36px",
     });
+    const option = createElement("div", "option");
+    const selectAll = createElement("button", "select_all");
+    const textSelect = document.createTextNode("Select All");
+    selectAll.appendChild(textSelect);
+    const deselectAll = createElement("button", "deselect_all", {
+      disabled: true,
+    });
+    const textDeselect = document.createTextNode("Deselect All");
+    deselectAll.appendChild(textDeselect);
+    const pText = document.createTextNode(" or maybe ");
+    option.appendChild(selectAll);
+    option.appendChild(pText);
+    option.appendChild(deselectAll);
     console.log(create_List);
     span_in.appendChild(text_span);
     found_images.appendChild(span_in);
     found_images.appendChild(img);
     el.appendChild(found_images);
+    el.appendChild(option);
     el.appendChild(create_List);
+
+    // fixed selectAll and deselectAll
+    window.onscroll = function () {
+      myFunction();
+    };
+    var option_fix = document.getElementsByClassName("option");
+    console.log(option_fix[0].offsetTop);
+    var sticky = option_fix[0].offsetTop;
+    function myFunction() {
+      if (window.pageYOffset > sticky) {
+        option_fix[0].classList.add("sticky");
+      } else {
+        option_fix[0].classList.remove("sticky");
+      }
+    }
   };
 
   //get images on page
@@ -126,7 +149,11 @@
   }
   // handle download
   const handleDownload = () => {
-    if (window.confirm(`Will be downloaded ${images.length} files. Are you sure?`)) {
+    if (!images.length) {
+      window.alert(`You haven't choice any file/files to download`);
+    } else if (
+      window.confirm(`Will be downloaded ${images.length} files. Are you sure?`)
+    ) {
       downloadAll();
     }
   };
@@ -156,12 +183,37 @@
       .catch((e) => console.log(e));
   }
   // handleOnclick
-  const handleOnclick = (index) =>{
-      if(testing[index].classList.length === 2){
-        testing[index].className = testing[index].classList[0];
-      }else{
-        testing[index].className += " mark";
+  const handleOnclick = () => {
+    images_selector = [];
+    for (
+      var i = 0;
+      i < list.item(0).getElementsByClassName("mark").length;
+      ++i
+    ) {
+      images_selector.push(
+        list
+          .item(0)
+          .getElementsByClassName("mark")
+          [i].getElementsByTagName("img")[0].src
+      );
+    }
+    images = images_selector;
+  };
+  // Deselect
+  const deselectAll = () => {
+    let Deselect = document.getElementsByClassName("deselect_all")[0];
+    Deselect.disabled = false;
+    Deselect.style.cursor = 'pointer';
+    Deselect.style.backgroundColor = '#2196F3';
+    Deselect.addEventListener('click', function(){
+      for (let index = 0; index < testing.length; index++) {
+        if (testing[index].classList.length === 2) {
+          testing[index].className = testing[index].classList[0];
+        }
       }
+      handleOnclick();
+    });
+    
   }
   // execute Script;
   window.onload = function () {
@@ -177,25 +229,35 @@
             console.log("img1", images);
             if (images.length) {
               downloadImages.style.display = "block";
-              //downloadImages.onclick = handleDownload;
               renderList(images, image_List);
+              images = [];
               testing = document.body.getElementsByClassName("image_grid");
-              let list = document.body.getElementsByClassName("list");
+              list = document.body.getElementsByClassName("list");
+              let selectAll =
+                document.body.getElementsByClassName("select_all")[0];
+              selectAll.addEventListener("click", function () {
+                for (let index = 0; index < testing.length; index++) {
+                  if (testing[index].classList.length === 1) {
+                  testing[index].className += " mark";
+                  }
+                }
+                handleOnclick();
+                deselectAll()
+              });
               for (let index = 0; index < testing.length; index++) {
-                testing[index].addEventListener('click', function (){
-                  if(testing[index].classList.length === 2){
+                testing[index].addEventListener("click", function () {
+                  if (testing[index].classList.length === 2) {
                     testing[index].className = testing[index].classList[0];
-                  }else{
+                  } else {
                     testing[index].className += " mark";
                   }
-                  images_selector = [];
-                  for(var i = 0; i < list.item(0).getElementsByClassName("mark").length; ++i){
-                    images_selector.push(list.item(0).getElementsByClassName("mark")[i].getElementsByTagName('img')[0].src);
+                  handleOnclick();
+                  if(images.length){
+                    deselectAll();
                   }
-                  images = images_selector;
-                  downloadImages.onclick = handleDownload;
                 });
               }
+              downloadImages.onclick = handleDownload;
             }
           }
         );
