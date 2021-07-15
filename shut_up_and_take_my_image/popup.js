@@ -3,7 +3,8 @@
   let image_List = document.getElementById("list_image");
   let downloadImages = document.getElementById("download_button");
   let count = 0;
-  let origin;
+  let testing;
+  let images_selector = [];
   const getName = (url) => {
     const path = url.split("/");
     return path[path.length - 1];
@@ -116,7 +117,6 @@
     let limited = 0;
     for (var i = 0; i < filter.length; ++i) {
       downloadResource(filter[i]);
-      console.log(i);
       if (limited >= 10) {
         await pause(3000);
         limited = 0;
@@ -126,7 +126,7 @@
   }
   // handle download
   const handleDownload = () => {
-    if (window.confirm(`Will be downloaded ${count} files. Are you sure?`)) {
+    if (window.confirm(`Will be downloaded ${images.length} files. Are you sure?`)) {
       downloadAll();
     }
   };
@@ -155,6 +155,14 @@
       })
       .catch((e) => console.log(e));
   }
+  // handleOnclick
+  const handleOnclick = (index) =>{
+      if(testing[index].classList.length === 2){
+        testing[index].className = testing[index].classList[0];
+      }else{
+        testing[index].className += " mark";
+      }
+  }
   // execute Script;
   window.onload = function () {
     chrome.tabs.query({ active: true }, function (tabs) {
@@ -169,8 +177,25 @@
             console.log("img1", images);
             if (images.length) {
               downloadImages.style.display = "block";
-              downloadImages.onclick = handleDownload;
+              //downloadImages.onclick = handleDownload;
               renderList(images, image_List);
+              testing = document.body.getElementsByClassName("image_grid");
+              let list = document.body.getElementsByClassName("list");
+              for (let index = 0; index < testing.length; index++) {
+                testing[index].addEventListener('click', function (){
+                  if(testing[index].classList.length === 2){
+                    testing[index].className = testing[index].classList[0];
+                  }else{
+                    testing[index].className += " mark";
+                  }
+                  images_selector = [];
+                  for(var i = 0; i < list.item(0).getElementsByClassName("mark").length; ++i){
+                    images_selector.push(list.item(0).getElementsByClassName("mark")[i].getElementsByTagName('img')[0].src);
+                  }
+                  images = images_selector;
+                  downloadImages.onclick = handleDownload;
+                });
+              }
             }
           }
         );
