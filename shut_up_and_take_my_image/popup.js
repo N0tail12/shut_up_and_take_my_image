@@ -22,11 +22,18 @@
   // create list of image
   const createList = (src) => {
     const list = createElement("div", "image_grid");
-
-    const preview = createElement("img", undefined, { src });
-
+    const a = createElement("a", "pop-up", {
+      href: src,
+      target: "_blank"
+    })
+    const popup = createElement("img", undefined, {
+      src: "images/pop-up.png",
+      style: "width: 30px; height: 30px;"
+    })
+    a.appendChild(popup);
+    const preview = createElement("img", "stupid", { src });
+    list.appendChild(a);
     list.appendChild(preview);
-
     return list;
   };
   // render list of image
@@ -194,34 +201,38 @@
         list
           .item(0)
           .getElementsByClassName("mark")
-          [i].getElementsByTagName("img")[0].src
+          [i].getElementsByClassName("stupid")[0].src
       );
     }
     images = images_selector;
-    if(images.length){
-      downloadImages.textContent = "Download " + images.length +" images";
-    }else{
-      downloadImages.textContent = "Download "
+    if (images.length) {
+      downloadImages.textContent = "Download " + images.length + " images";
+    } else {
+      downloadImages.textContent = "Download ";
     }
+    console.log(images);
   };
   // Deselect
   const deselectAll = () => {
     let Deselect = document.getElementsByClassName("deselect_all")[0];
-    console.log(Deselect)
-    if(images.length > 0){
+    console.log(Deselect);
+    if (images.length > 0) {
       Deselect.disabled = false;
       Deselect.style.cursor = "pointer";
-      Deselect.style.backgroundColor = '#2196F3';
+      Deselect.style.backgroundColor = "#212121";
     }
-    Deselect.addEventListener('click', function(){
+    Deselect.addEventListener("click", function () {
       for (let index = 0; index < testing.length; index++) {
         if (testing[index].classList.length === 2) {
           testing[index].className = testing[index].classList[0];
         }
       }
+      Deselect.disabled = true;
+      Deselect.style.cursor = null;
+      Deselect.style.backgroundColor = "#7a7a7a";
       handleOnclick();
     });
-  }
+  };
   // execute Script;
   window.onload = function () {
     chrome.tabs.query({ active: true }, function (tabs) {
@@ -245,7 +256,7 @@
               selectAll.addEventListener("click", function () {
                 for (let index = 0; index < testing.length; index++) {
                   if (testing[index].classList.length === 1) {
-                  testing[index].className += " mark";
+                    testing[index].className += " mark";
                   }
                 }
                 handleOnclick();
