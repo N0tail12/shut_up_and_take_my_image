@@ -221,6 +221,11 @@
       Deselect.style.cursor = "pointer";
       Deselect.style.backgroundColor = "#212121";
     }
+    if(images.length === 0){
+      Deselect.disabled = true;
+      Deselect.style.cursor = null;
+      Deselect.style.backgroundColor = "#7a7a7a";
+    }
     Deselect.addEventListener("click", function () {
       for (let index = 0; index < testing.length; index++) {
         if (testing[index].classList.length === 2) {
