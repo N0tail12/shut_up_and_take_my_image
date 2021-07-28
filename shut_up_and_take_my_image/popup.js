@@ -6,6 +6,7 @@
   let testing;
   let images_selector = [];
   let list = [];
+  let blob_Images = [];
   const getName = (url) => {
     const path = url.split("/");
     return path[path.length - 1];
@@ -164,24 +165,32 @@
       downloadAll();
     }
   };
-
+  // try blob to fix cross-origin
+  function transformUrl(url){
+    let blobUrl;
+    fetch(url)
+      .then((response) => response.blob())
+      .then((blob) => {
+        blobUrl = window.URL.createObjectURL(blob);
+        console.log(blobUrl);
+        return blobUrl;
+      })
+      .catch((e) => console.log(e));
+    
+  }
   // force to download image by change header to allow cross-origin
   function forceDownload(blob, filename) {
     var a = document.createElement("a");
     a.download = "";
     a.href = blob;
+    console.log(blob);
     document.body.appendChild(a);
     a.click();
     a.remove();
   }
   function downloadResource(url, filename) {
     if (!filename) filename = url.split("\\").pop().split("/").pop();
-    fetch(url, {
-      headers: new Headers({
-        Origin: location.origin,
-      }),
-      mode: "cors",
-    })
+    fetch(url)
       .then((response) => response.blob())
       .then((blob) => {
         let blobUrl = window.URL.createObjectURL(blob);
